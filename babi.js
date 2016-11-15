@@ -9,71 +9,63 @@ jQuery(document).on('ready', function() {
 });
 
 components.Babi = function(el) {
-	var self = this;
-	self.el = jQuery(el);
-	self.el.wrapInner('<div data-babi="content">');
-	self.el.prepend(jQuery('<div data-babi="image"></div>'));
-	self.image = self.el.find('[data-babi="image"]');
-	self.parent = self.el.parent();
-	self.breakpoints = [{
+	this.el = jQuery(el);
+	this.el.wrapInner('<div data-babi="content">');
+	this.el.prepend(jQuery('<div data-babi="image"></div>'));
+	this.image = this.el.find('[data-babi="image"]');
+	this.parent = this.el.parent();
+	this.breakpoints = [{
 		type: 'mobile',
 		width: 480
 	}, {
 		type: 'tablet',
 		width: 800
 	}];
-	self.current = '';
-	self.images = {};
-	self.init();
+	this.current = '';
+	this.images = {};
+	this.init();
 };
 components.Babi.prototype = {
 	init: function() {
-		var self = this;
-		jQuery(window).on('resize.Babi', function() {
-			self.resize();
-		});
-		self.resize();
+		jQuery(window).on('resize.Babi', this.resize.bind(this));
+		this.resize();
 	},
 	resize: function() {
-		var self = this;
-		for (var i = 0; i < self.breakpoints.length; i++) {
-			if (self.parent.width() <= self.breakpoints[i].width) {
-				if (self.current != self.breakpoints[i].type) {
-					self.setImage(self.breakpoints[i].type);
+		for (var i = 0; i < this.breakpoints.length; i++) {
+			if (this.parent.width() <= this.breakpoints[i].width) {
+				if (this.current != this.breakpoints[i].type) {
+					this.setImage(this.breakpoints[i].type);
 					return true;
 				} else {
 					return true;
 				}
 			}
 		}
-		if (self.current != 'default') {
-			self.setImage('default');
+		if (this.current != 'default') {
+			this.setImage('default');
 		}
 	},
 	setImage: function(type) {
-		var self = this;
-		if (typeof self.images[type] == 'undefined') {
-			self.loadImage(type, function() {
-				self.showImage(type);
-			});
+		if (typeof this.images[type] == 'undefined') {
+			this.loadImage(type, function() {
+				this.showImage(type);
+			}.bind(this));
 		} else {
-			self.showImage(type);
+			this.showImage(type);
 		}
 	},
 	showImage: function(type) {
-		var self = this;
-		var startingImage = self.image.css('background-image');
-		self.image.css('background-image', 'url(' + self.images[type] + ')');
-		self.current = type;
+		var startingImage = this.image.css('background-image');
+		this.image.css('background-image', 'url(' + this.images[type] + ')');
+		this.current = type;
 		if (startingImage == 'none') {
-			self.image.css('opacity', 1);
+			this.image.css('opacity', 1);
 		}
 	},
 	loadImage: function(type, callback) {
-		var self = this;
-		var url = self.el.data('babi-' + type);
-		if (typeof url == 'undefined') url = self.el.data('babi-default');
-		self.images[type] = url;
+		var url = this.el.data('babi-' + type);
+		if (typeof url == 'undefined') url = this.el.data('babi-default');
+		this.images[type] = url;
 		var image = new Image();
 		image.src = url;
 		image.onload = callback;
